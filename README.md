@@ -2,9 +2,9 @@
 
 This repository provides an interactive Black-Scholes Pricing Model dashboard that helps in visualizing option prices under varying conditions. The dashboard is designed to be user-friendly and interactive, allowing users to explore how changes in spot price, volatility, and other parameters influence the value of options.
 
-https://blackschole.streamlit.app/
+[https://blackschole.streamlit.app/](https://blackscholes-dashboard.streamlit.app/)
 
-## 🚀 Features:
+## Features:
 
 1. **Options Pricing Visualization**: 
    - Displays both Call and Put option prices using an interactive heatmap.
