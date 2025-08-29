@@ -298,7 +298,7 @@ with col2:
 
 st.markdown("")
 st.title("Options Price - Interactive Heatmap")
-st.info("🔥 **Red zones indicate DANGER VALUES (high premiums/high risk)**. Explore how option prices fluctuate with varying 'Spot Prices and Volatility' levels using interactive heatmap parameters, all while maintaining a constant 'Strike Price'.")
+# st.info("🔥 **Red zones indicate DANGER VALUES (high premiums/high risk)**. Explore how option prices fluctuate with varying 'Spot Prices and Volatility' levels using interactive heatmap parameters, all while maintaining a constant 'Strike Price'.")
 
 # Risk warning
 st.warning("⚠️ **Risk Warning**: Red areas in the heatmaps represent higher option premiums, which typically indicate increased risk and potential volatility in the market.")
