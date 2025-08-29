@@ -116,35 +116,7 @@ class BlackScholes:
 
         return call_price, put_price
 
-# Function to generate heatmaps
-# ... your existing imports and BlackScholes class definition ...
-
-
-# Sidebar for User Inputs
-with st.sidebar:
-    st.title("📊 Black-Scholes Model")
-    st.write("`Created by:`")
-    linkedin_url = "https://www.linkedin.com/in/palagiri-shahista-afreen"
-    st.markdown(f'<a href="{linkedin_url}" target="_blank" style="text-decoration: none; color: inherit;"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" width="25" height="25" style="vertical-align: middle; margin-right: 10px;">`Shahista Afreen, Palagiri`</a>', unsafe_allow_html=True)
-
-    current_price = st.number_input("Current Asset Price", value=100.0)
-    strike = st.number_input("Strike Price", value=100.0)
-    time_to_maturity = st.number_input("Time to Maturity (Years)", value=1.0)
-    volatility = st.number_input("Volatility (σ)", value=0.2)
-    interest_rate = st.number_input("Risk-Free Interest Rate", value=0.05)
-
-    st.markdown("---")
-    calculate_btn = st.button('Heatmap Parameters')
-    spot_min = st.number_input('Min Spot Price', min_value=0.01, value=current_price*0.8, step=0.01)
-    spot_max = st.number_input('Max Spot Price', min_value=0.01, value=current_price*1.2, step=0.01)
-    vol_min = st.slider('Min Volatility for Heatmap', min_value=0.01, max_value=1.0, value=volatility*0.5, step=0.01)
-    vol_max = st.slider('Max Volatility for Heatmap', min_value=0.01, max_value=1.0, value=volatility*1.5, step=0.01)
-    
-    spot_range = np.linspace(spot_min, spot_max, 10)
-    vol_range = np.linspace(vol_min, vol_max, 10)
-
-
-
+# Function to generate heatmaps with red indicating danger values
 def plot_heatmap(bs_model, spot_range, vol_range, strike):
     call_prices = np.zeros((len(vol_range), len(spot_range)))
     put_prices = np.zeros((len(vol_range), len(spot_range)))
@@ -162,22 +134,124 @@ def plot_heatmap(bs_model, spot_range, vol_range, strike):
             call_prices[i, j] = bs_temp.call_price
             put_prices[i, j] = bs_temp.put_price
     
-    # Plotting Call Price Heatmap
+    # Plotting Call Price Heatmap with red indicating high danger/risk
     fig_call, ax_call = plt.subplots(figsize=(10, 8))
-    sns.heatmap(call_prices, xticklabels=np.round(spot_range, 2), yticklabels=np.round(vol_range, 2), annot=True, fmt=".2f", cmap="viridis", ax=ax_call)
-    ax_call.set_title('CALL')
+    sns.heatmap(call_prices, 
+                xticklabels=np.round(spot_range, 2), 
+                yticklabels=np.round(vol_range, 2), 
+                annot=True, 
+                fmt=".2f", 
+                cmap="RdYlGn_r",  # Red-Yellow-Green reversed (red = high values = danger)
+                ax=ax_call)
+    ax_call.set_title('CALL Option Prices (Red = High Risk/High Premium)', fontweight='bold')
     ax_call.set_xlabel('Spot Price')
     ax_call.set_ylabel('Volatility')
     
-    # Plotting Put Price Heatmap
+    # Plotting Put Price Heatmap with red indicating high danger/risk
     fig_put, ax_put = plt.subplots(figsize=(10, 8))
-    sns.heatmap(put_prices, xticklabels=np.round(spot_range, 2), yticklabels=np.round(vol_range, 2), annot=True, fmt=".2f", cmap="viridis", ax=ax_put)
-    ax_put.set_title('PUT')
+    sns.heatmap(put_prices, 
+                xticklabels=np.round(spot_range, 2), 
+                yticklabels=np.round(vol_range, 2), 
+                annot=True, 
+                fmt=".2f", 
+                cmap="RdYlGn_r",  # Red-Yellow-Green reversed (red = high values = danger)
+                ax=ax_put)
+    ax_put.set_title('PUT Option Prices (Red = High Risk/High Premium)', fontweight='bold')
     ax_put.set_xlabel('Spot Price')
     ax_put.set_ylabel('Volatility')
     
     return fig_call, fig_put
 
+
+# Sidebar for User Inputs
+with st.sidebar:
+    st.title("📊 Black-Scholes Model")
+    st.write("`Created by:`")
+    linkedin_url = "https://www.linkedin.com/in/palagiri-shahista-afreen"  # UPDATE THIS
+    st.markdown(f'<a href="{linkedin_url}" target="_blank" style="text-decoration: none; color: inherit;"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" width="25" height="25" style="vertical-align: middle; margin-right: 10px;">`Palagiri Shahista Afreen`</a>', unsafe_allow_html=True)  # UPDATE THIS
+
+    current_price = st.number_input("Current Asset Price", value=100.0)
+    strike = st.number_input("Strike Price", value=100.0)
+    time_to_maturity = st.number_input("Time to Maturity (Years)", value=1.0)
+    volatility = st.number_input("Volatility (σ)", value=0.2)
+    interest_rate = st.number_input("Risk-Free Interest Rate", value=0.05)
+
+    st.markdown("---")
+    st.subheader("🎨 Heatmap Parameters")
+    calculate_btn = st.button('Update Heatmap')
+    spot_min = st.number_input('Min Spot Price', min_value=0.01, value=current_price*0.8, step=0.01)
+    spot_max = st.number_input('Max Spot Price', min_value=0.01, value=current_price*1.2, step=0.01)
+    vol_min = st.slider('Min Volatility for Heatmap', min_value=0.01, max_value=1.0, value=volatility*0.5, step=0.01)
+    vol_max = st.slider('Max Volatility for Heatmap', min_value=0.01, max_value=1.0, value=volatility*1.5, step=0.01)
+    
+    # Color scheme selection
+    st.markdown("---")
+    st.subheader("🎨 Color Scheme")
+    color_option = st.selectbox(
+        "Choose heatmap color scheme:",
+        ["Red Danger (RdYlGn_r)", "Classic Red (Reds)", "Red-Orange (OrRd)", "Red-Purple (RdPu)"]
+    )
+    
+    spot_range = np.linspace(spot_min, spot_max, 10)
+    vol_range = np.linspace(vol_min, vol_max, 10)
+
+# Update the plot_heatmap function to use selected color scheme
+def plot_heatmap_with_color(bs_model, spot_range, vol_range, strike, color_scheme):
+    call_prices = np.zeros((len(vol_range), len(spot_range)))
+    put_prices = np.zeros((len(vol_range), len(spot_range)))
+    
+    # Map color options to matplotlib colormaps
+    color_map_dict = {
+        "Red Danger (RdYlGn_r)": "RdYlGn_r",
+        "Classic Red (Reds)": "Reds", 
+        "Red-Orange (OrRd)": "OrRd",
+        "Red-Purple (RdPu)": "RdPu"
+    }
+    
+    selected_cmap = color_map_dict.get(color_scheme, "RdYlGn_r")
+    
+    for i, vol in enumerate(vol_range):
+        for j, spot in enumerate(spot_range):
+            bs_temp = BlackScholes(
+                time_to_maturity=bs_model.time_to_maturity,
+                strike=strike,
+                current_price=spot,
+                volatility=vol,
+                interest_rate=bs_model.interest_rate
+            )
+            bs_temp.calculate_prices()
+            call_prices[i, j] = bs_temp.call_price
+            put_prices[i, j] = bs_temp.put_price
+    
+    # Plotting Call Price Heatmap
+    fig_call, ax_call = plt.subplots(figsize=(10, 8))
+    sns.heatmap(call_prices, 
+                xticklabels=np.round(spot_range, 2), 
+                yticklabels=np.round(vol_range, 2), 
+                annot=True, 
+                fmt=".2f", 
+                cmap=selected_cmap,
+                ax=ax_call,
+                cbar_kws={'label': 'Option Price ($)'})
+    ax_call.set_title('CALL Option Prices (Red = Higher Values/Risk)', fontweight='bold', fontsize=14)
+    ax_call.set_xlabel('Spot Price', fontweight='bold')
+    ax_call.set_ylabel('Volatility', fontweight='bold')
+    
+    # Plotting Put Price Heatmap
+    fig_put, ax_put = plt.subplots(figsize=(10, 8))
+    sns.heatmap(put_prices, 
+                xticklabels=np.round(spot_range, 2), 
+                yticklabels=np.round(vol_range, 2), 
+                annot=True, 
+                fmt=".2f", 
+                cmap=selected_cmap,
+                ax=ax_put,
+                cbar_kws={'label': 'Option Price ($)'})
+    ax_put.set_title('PUT Option Prices (Red = Higher Values/Risk)', fontweight='bold', fontsize=14)
+    ax_put.set_xlabel('Spot Price', fontweight='bold')
+    ax_put.set_ylabel('Volatility', fontweight='bold')
+    
+    return fig_call, fig_put
 
 # Main Page for Output Display
 st.title("Black-Scholes Pricing Model")
@@ -224,17 +298,20 @@ with col2:
 
 st.markdown("")
 st.title("Options Price - Interactive Heatmap")
-st.info("Explore how option prices fluctuate with varying 'Spot Prices and Volatility' levels using interactive heatmap parameters, all while maintaining a constant 'Strike Price'.")
+st.info("🔥 **Red zones indicate DANGER VALUES (high premiums/high risk)**. Explore how option prices fluctuate with varying 'Spot Prices and Volatility' levels using interactive heatmap parameters, all while maintaining a constant 'Strike Price'.")
+
+# Risk warning
+st.warning("⚠️ **Risk Warning**: Red areas in the heatmaps represent higher option premiums, which typically indicate increased risk and potential volatility in the market.")
 
 # Interactive Sliders and Heatmaps for Call and Put Options
 col1, col2 = st.columns([1,1], gap="small")
 
 with col1:
     st.subheader("Call Price Heatmap")
-    heatmap_fig_call, _ = plot_heatmap(bs_model, spot_range, vol_range, strike)
+    heatmap_fig_call, _ = plot_heatmap_with_color(bs_model, spot_range, vol_range, strike, color_option)
     st.pyplot(heatmap_fig_call)
 
 with col2:
     st.subheader("Put Price Heatmap")
-    _, heatmap_fig_put = plot_heatmap(bs_model, spot_range, vol_range, strike)
+    _, heatmap_fig_put = plot_heatmap_with_color(bs_model, spot_range, vol_range, strike, color_option)
     st.pyplot(heatmap_fig_put)
